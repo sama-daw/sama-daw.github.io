@@ -282,9 +282,78 @@
   }
 
   a:focus-visible, button:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
+
+  body.loading{ overflow:hidden; height:100vh; }
+
+  #intro-loader{
+    position:fixed; inset:0; z-index:999;
+    background:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    transition:opacity .6s ease, visibility .6s ease;
+  }
+  #intro-loader.loaded{ opacity:0; visibility:hidden; pointer-events:none; }
+  .intro-inner{ text-align:center; width:300px; max-width:80vw; }
+  .intro-logo{
+    font-family:'Fraunces', serif; font-weight:600; font-size:2.1rem;
+    letter-spacing:.02em; margin-bottom:20px;
+  }
+  .intro-logo span{ color:var(--amber); }
+  .intro-line{
+    font-family:'JetBrains Mono', monospace; font-size:.8rem; color:var(--teal);
+    min-height:18px; margin-bottom:20px; white-space:nowrap; overflow:hidden;
+    border-right:2px solid var(--teal); display:inline-block; padding-right:2px;
+  }
+  .intro-bar{
+    height:3px; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:4px; overflow:hidden;
+  }
+  .intro-bar-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg, var(--teal), var(--amber));
+    transition:width .2s linear;
+  }
+  .intro-pct{
+    font-family:'JetBrains Mono', monospace; font-size:.7rem; color:var(--muted);
+    margin-top:10px; letter-spacing:.05em;
+  }
+
+  .hero .eyebrow, .hero h1.name, .hero .lede, .hero .hero-actions,
+  .hero .contact-line, .hero .stat-row, .hero .portrait-block{
+    opacity:0; transform:translateY(22px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .hero.hero-in .eyebrow{ transition-delay:.05s; }
+  .hero.hero-in h1.name{ transition-delay:.15s; }
+  .hero.hero-in .lede{ transition-delay:.25s; }
+  .hero.hero-in .hero-actions{ transition-delay:.35s; }
+  .hero.hero-in .contact-line{ transition-delay:.42s; }
+  .hero.hero-in .stat-row{ transition-delay:.5s; }
+  .hero.hero-in .portrait-block{ transition-delay:.3s; }
+  .hero.hero-in .eyebrow, .hero.hero-in h1.name, .hero.hero-in .lede,
+  .hero.hero-in .hero-actions, .hero.hero-in .contact-line,
+  .hero.hero-in .stat-row, .hero.hero-in .portrait-block{
+    opacity:1; transform:none;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    #intro-loader{ display:none; }
+    .hero .eyebrow, .hero h1.name, .hero .lede, .hero .hero-actions,
+    .hero .contact-line, .hero .stat-row, .hero .portrait-block{
+      opacity:1; transform:none; transition:none;
+    }
+  }
 </style>
 </head>
-<body>
+<body class="loading">
+
+<div id="intro-loader" class="grid-paper">
+  <div class="intro-inner">
+    <div class="intro-logo">Sama<span>.</span></div>
+    <div class="intro-line" id="introLine"></div>
+    <div class="intro-bar"><div class="intro-bar-fill" id="introBarFill"></div></div>
+    <div class="intro-pct" id="introPct">0%</div>
+  </div>
+</div>
 
 <header class="site">
   <nav>
@@ -502,6 +571,59 @@
 <footer>© 2026 Sama Dawood · Benha, Egypt</footer>
 
 <script>
+  (function(){
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const loader = document.getElementById('intro-loader');
+    const hero = document.querySelector('.hero');
+
+    function finishIntro(){
+      document.body.classList.remove('loading');
+      hero.classList.add('hero-in');
+      loader.classList.add('loaded');
+      setTimeout(()=> loader.remove(), 700);
+    }
+
+    if(reduce || !loader){
+      document.body.classList.remove('loading');
+      hero.classList.add('hero-in');
+      if(loader) loader.remove();
+      return;
+    }
+
+    const introLine = document.getElementById('introLine');
+    const introBarFill = document.getElementById('introBarFill');
+    const introPct = document.getElementById('introPct');
+    const messages = ['import sama_dawood as sd', 'sd.portfolio.render()'];
+    let msgIndex = 0, charIndex = 0;
+
+    function typeMsg(){
+      if(msgIndex >= messages.length) return;
+      const msg = messages[msgIndex];
+      if(charIndex <= msg.length){
+        introLine.textContent = msg.slice(0, charIndex);
+        charIndex++;
+        setTimeout(typeMsg, 26);
+      } else {
+        msgIndex++;
+        charIndex = 0;
+        setTimeout(typeMsg, 260);
+      }
+    }
+    typeMsg();
+
+    let pct = 0;
+    const barInterval = setInterval(()=>{
+      pct += Math.random()*16;
+      if(pct >= 100){
+        pct = 100;
+        clearInterval(barInterval);
+        setTimeout(finishIntro, 380);
+      }
+      introBarFill.style.width = pct + '%';
+      introPct.textContent = Math.floor(pct) + '%';
+    }, 170);
+  })();
+
   // Scroll reveal
   const revealEls = document.querySelectorAll('.reveal');
   const io = new IntersectionObserver((entries)=>{
