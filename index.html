@@ -44,6 +44,7 @@
   }
 
   .wrap{ max-width:1120px; margin:0 auto; padding:0 32px; }
+  @media(max-width:480px){ .wrap{ padding:0 20px; } nav{ padding:16px 20px; } }
 
   /* ---------- NAV ---------- */
   header.site{
@@ -82,7 +83,34 @@
   .btn-solid:hover{ background:#6fe0d5; }
   .nav-cta{ display:none; }
   @media(min-width:720px){ .nav-cta{ display:inline-block; } }
-  @media(max-width:720px){ .nav-links{ display:none; } }
+
+  .nav-toggle{
+    display:none; background:none; border:1px solid var(--line); border-radius:var(--radius);
+    width:38px; height:38px; padding:0; cursor:pointer; position:relative;
+  }
+  .nav-toggle span, .nav-toggle span::before, .nav-toggle span::after{
+    content:''; position:absolute; left:9px; width:20px; height:2px; background:var(--text);
+    transition:transform .2s, opacity .2s;
+  }
+  .nav-toggle span{ top:18px; }
+  .nav-toggle span::before{ top:-6px; }
+  .nav-toggle span::after{ top:6px; }
+  .nav-toggle.open span{ background:transparent; }
+  .nav-toggle.open span::before{ transform:translateY(6px) rotate(45deg); }
+  .nav-toggle.open span::after{ transform:translateY(-6px) rotate(-45deg); }
+
+  @media(max-width:720px){
+    .nav-toggle{ display:block; }
+    .nav-links{
+      display:flex; flex-direction:column; gap:0; position:fixed; top:60px; left:0; right:0;
+      background:rgba(13,24,38,.98); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+      max-height:0; overflow:hidden; transition:max-height .25s ease;
+    }
+    .nav-links.open{ max-height:360px; }
+    .nav-links li{ width:100%; }
+    .nav-links a{ display:block; padding:16px 32px; border-top:1px solid var(--line); font-size:.95rem; }
+    .nav-cta{ display:none !important; }
+  }
 
   /* ---------- HERO ---------- */
   .hero{
@@ -269,6 +297,7 @@
       <li><a href="#contact">Contact</a></li>
     </ul>
     <a class="btn nav-cta" href="mailto:samadaw3@gmail.com">Get in touch</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span></button>
   </nav>
 </header>
 
@@ -300,7 +329,7 @@
 
       <div class="portrait-block">
         <div class="portrait-frame">
-          <img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Sama.png" alt="Portrait of Sama Dawood" loading="lazy">
+          <img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Sama_pic.png" alt="Portrait of Sama Dawood" loading="lazy">
         </div>
         <div class="plot-tag tag-1">fit: <b>R² rising</b></div>
         <div class="plot-tag tag-2">status: <b>ongoing</b></div>
@@ -484,6 +513,22 @@
     });
   }, { threshold:.15 });
   revealEls.forEach(el=>io.observe(el));
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinksEl = document.querySelector('.nav-links');
+  navToggle.addEventListener('click', ()=>{
+    const isOpen = navLinksEl.classList.toggle('open');
+    navToggle.classList.toggle('open', isOpen);
+    navToggle.setAttribute('aria-expanded', isOpen);
+  });
+  navLinksEl.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', ()=>{
+      navLinksEl.classList.remove('open');
+      navToggle.classList.remove('open');
+      navToggle.setAttribute('aria-expanded','false');
+    });
+  });
 
   // Skill meter fill on view
   const meters = document.querySelectorAll('.meter-fill');
