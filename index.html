@@ -215,6 +215,25 @@
   .cap-card li{ padding:4px 0; }
   .cap-card.soft p{ margin:0; font-size:.88rem; color:var(--muted); line-height:1.8; }
 
+  /* ---------- PROJECTS ---------- */
+  .proj-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:26px; }
+  .proj-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden; display:flex; flex-direction:column; transition:border-color .2s, transform .2s;
+  }
+  .proj-card:hover{ border-color:var(--teal); transform:translateY(-3px); }
+  .proj-cover{ width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:var(--surface-2); }
+  .proj-body{ padding:24px 24px 26px; display:flex; flex-direction:column; gap:12px; flex:1; }
+  .proj-body h3{ font-family:'Fraunces', serif; font-weight:500; font-size:1.22rem; margin:0; }
+  .proj-tags{ display:flex; flex-wrap:wrap; gap:7px; }
+  .proj-tags span{
+    font-family:'JetBrains Mono', monospace; font-size:.72rem; color:var(--teal);
+    background:var(--teal-dim); border:1px solid var(--line); padding:4px 9px; border-radius:2px;
+  }
+  .proj-desc{ color:var(--muted); font-size:.9rem; line-height:1.65; margin:0; }
+  .proj-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:auto; padding-top:6px; }
+  .proj-actions .btn{ padding:8px 14px; font-size:.78rem; }
+
   /* ---------- JOURNEY ---------- */
   .timeline{ position:relative; }
   .timeline::before{
@@ -361,6 +380,7 @@
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
       <li><a href="#journey">Journey</a></li>
       <li><a href="#education">Education</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -471,10 +491,37 @@
     </div>
   </section>
 
+  <section id="projects">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">02 — Projects</span>
+        <h2>Data in the wild — real projects, real mess</h2>
+      </div>
+
+      <div class="proj-grid reveal">
+        <div class="proj-card">
+          <img class="proj-cover" src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Cover__1.png" alt="Eva Pharma sales & distribution analysis cover" loading="lazy">
+          <div class="proj-body">
+            <h3>Eva Pharma — Sales &amp; Distribution Analytics</h3>
+            <div class="proj-tags">
+              <span>Python</span><span>Pandas</span><span>NumPy</span><span>Matplotlib</span><span>Seaborn</span><span>Plotly</span>
+            </div>
+            <p class="proj-desc">Cleaned and analyzed ~600K pharmaceutical sales transactions across 179+ branches — fixing duplicate records, inconsistent Arabic/English branch and product names, and messy currency fields — then surfaced monthly revenue trends, top products, top branches, and a regional deep-dive on Banha.</p>
+            <div class="proj-actions">
+              <a class="btn btn-solid" href="pharma-case-study.html">Case Study →</a>
+              <a class="btn" href="https://github.com/sama-daw/Pharma_Analysis_Project" target="_blank" rel="noopener">GitHub ↗</a>
+              <a class="btn" href="#" target="_blank" rel="noopener">LinkedIn Post ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="journey">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="sec-eyebrow">02 — Certifications, Training &amp; Activities</span>
+        <span class="sec-eyebrow">03 — Certifications, Training &amp; Activities</span>
         <h2>The journey so far</h2>
       </div>
 
@@ -534,7 +581,7 @@
   <section id="education">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="sec-eyebrow">03 — Education</span>
+        <span class="sec-eyebrow">04 — Education</span>
         <h2>B.Sc. Computer Science &amp; Artificial Intelligence</h2>
       </div>
 
