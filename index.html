@@ -67,7 +67,18 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:16px 3
 h1.headline{font-family:'Newsreader',serif;font-weight:500;font-size:clamp(2rem,4.6vw,3.1rem);line-height:1.28;margin:0 0 24px;max-width:15ch;}
 h1.headline i{font-style:italic;color:var(--amber);}
 .lede{color:var(--muted);font-size:1.05rem;max-width:52ch;margin-bottom:30px;}
-.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:30px;}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:18px;}
+.link-row{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:30px;}
+.link-row a{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:'IBM Plex Mono',monospace;font-size:.78rem;
+  padding:7px 13px 7px 11px;border-radius:20px;
+  border:1px solid var(--line);color:var(--muted);text-decoration:none;
+  background:var(--panel);transition:border-color .2s,color .2s,transform .2s;
+}
+.link-row a:hover{color:var(--amber);border-color:var(--amber);transform:translateY(-2px);}
+.link-row a .dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex:none;}
+.contact-cta .link-row{justify-content:center;margin-top:0;margin-bottom:8px;}
 .contact-line{font-size:.85rem;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap;}
 .contact-line a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--muted);}
 .contact-line a:hover{color:var(--amber);border-color:var(--amber);}
@@ -400,8 +411,12 @@ h2::after{
         <div class="hero-actions">
           <a class="btn btn-solid" href="#projects">See the work</a>
           <a class="btn" href="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Sama_Dawood_CV.pdf" download="Sama_Dawood_CV.pdf">Download CV ↓</a>
-          <a class="btn" href="https://www.linkedin.com/in/sama-dawoodm/" target="_blank" rel="noopener">LinkedIn</a>
-          <a class="btn" href="https://github.com/sama-daw" target="_blank" rel="noopener">GitHub</a>
+        </div>
+        <div class="link-row">
+          <a href="https://www.linkedin.com/in/sama-dawoodm/" target="_blank" rel="noopener"><span class="dot"></span>LinkedIn</a>
+          <a href="https://github.com/sama-daw" target="_blank" rel="noopener"><span class="dot"></span>GitHub</a>
+          <a href="https://khamsat.com/user/sama_dawood" target="_blank" rel="noopener"><span class="dot"></span>خمسات</a>
+          <a href="https://www.upwork.com/freelancers/~0142477094cf9b1195?mp_source=share" target="_blank" rel="noopener"><span class="dot"></span>Upwork</a>
         </div>
         <div class="contact-line">
           <span>📍 Benha, Egypt</span>
@@ -602,8 +617,12 @@ h2::after{
       <p class="lede reveal" style="max-width:48ch;">Open to data science internships, collaborations and speaking opportunities.</p>
       <div class="hero-actions reveal">
         <a class="btn btn-solid" href="mailto:samadaw3@gmail.com">samadaw3@gmail.com</a>
-        <a class="btn" href="https://www.linkedin.com/in/sama-dawoodm/" target="_blank" rel="noopener">LinkedIn</a>
-        <a class="btn" href="https://github.com/sama-daw" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="link-row reveal">
+        <a href="https://www.linkedin.com/in/sama-dawoodm/" target="_blank" rel="noopener"><span class="dot"></span>LinkedIn</a>
+        <a href="https://github.com/sama-daw" target="_blank" rel="noopener"><span class="dot"></span>GitHub</a>
+        <a href="https://khamsat.com/user/sama_dawood" target="_blank" rel="noopener"><span class="dot"></span>خمسات</a>
+        <a href="https://www.upwork.com/freelancers/~0142477094cf9b1195?mp_source=share" target="_blank" rel="noopener"><span class="dot"></span>Upwork</a>
       </div>
 
       <form class="contact-form reveal" id="contactForm" action="https://formspree.io/f/myeznlwb" method="POST">
