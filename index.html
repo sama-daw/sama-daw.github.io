@@ -278,15 +278,34 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;}.reveal{transition:none;opacity:1;transform:none;}.meter-fill{transition:none;}}
 
 body.loading{overflow:hidden;height:100vh;}
-#intro-loader{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease;}
+#intro-loader{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .45s ease,visibility .45s ease;overflow:hidden;}
 #intro-loader.loaded{opacity:0;visibility:hidden;pointer-events:none;}
-.intro-inner{text-align:center;width:280px;max-width:80vw;}
-.intro-logo{font-family:'Newsreader',serif;font-style:italic;font-size:1.8rem;margin-bottom:20px;}
+#intro-loader::before{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(200,220,235,.12) 1px, transparent 1px);
+  background-size:26px 26px;
+}
+.intro-inner{position:relative;text-align:center;width:280px;max-width:80vw;}
+.intro-ring-wrap{position:relative;width:88px;height:88px;margin:0 auto 22px;}
+.intro-ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}
+.intro-ring-track{fill:none;stroke:var(--line);stroke-width:3;}
+.intro-ring-fill{fill:none;stroke:url(#introGrad);stroke-width:3;stroke-linecap:round;stroke-dasharray:251;stroke-dashoffset:251;transition:stroke-dashoffset .18s linear;}
+.intro-ring-wrap .core{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono',monospace;font-size:.92rem;color:var(--amber);
+}
+.intro-ring-wrap .blip{
+  position:absolute;top:50%;left:50%;width:5px;height:5px;border-radius:50%;
+  background:var(--blue);box-shadow:0 0 8px 2px var(--blue);
+  transform-origin:1px 44px;animation:blipSpin 1.1s linear infinite;
+}
+@keyframes blipSpin{to{transform:translate(-50%,-50%) rotate(360deg) translateY(-44px);}}
+.intro-logo{font-family:'Newsreader',serif;font-style:italic;font-size:1.4rem;margin-bottom:4px;}
 .intro-logo b{font-style:normal;color:var(--amber);}
-.intro-line{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--blue);min-height:18px;margin-bottom:20px;white-space:nowrap;overflow:hidden;border-right:2px solid var(--blue);display:inline-block;padding-right:2px;}
-.intro-bar{height:3px;background:var(--panel-2);border:1px solid var(--line);border-radius:4px;overflow:hidden;}
-.intro-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--amber));transition:width .2s linear;}
-.intro-pct{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted);margin-top:10px;}
+.intro-line{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--blue);min-height:16px;margin:2px 0 0;letter-spacing:.02em;}
+.intro-line .cursor{display:inline-block;width:6px;height:12px;background:var(--blue);margin-left:2px;vertical-align:-2px;animation:cursorBlink .8s step-end infinite;}
+@keyframes cursorBlink{50%{opacity:0;}}
+@media(prefers-reduced-motion:reduce){.blip{animation:none;}.intro-line .cursor{animation:none;}}
 /* ============================================================
    REDESIGN LAYER — same palette, hand-made/editorial feel
    ============================================================ */
@@ -377,10 +396,22 @@ h2::after{
 
 <div id="intro-loader">
   <div class="intro-inner">
+    <div class="intro-ring-wrap">
+      <svg viewBox="0 0 90 90">
+        <defs>
+          <linearGradient id="introGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4fd1c5"/>
+            <stop offset="100%" stop-color="#f2b84b"/>
+          </linearGradient>
+        </defs>
+        <circle class="intro-ring-track" cx="45" cy="45" r="40"></circle>
+        <circle class="intro-ring-fill" id="introRingFill" cx="45" cy="45" r="40"></circle>
+      </svg>
+      <div class="core mono" id="introPct">0%</div>
+      <div class="blip" aria-hidden="true"></div>
+    </div>
     <div class="intro-logo">Sama<b>.</b></div>
-    <div class="intro-line" id="introLine"></div>
-    <div class="intro-bar"><div class="intro-bar-fill" id="introBarFill"></div></div>
-    <div class="intro-pct" id="introPct">0%</div>
+    <div class="intro-line mono" id="introLine"><span class="cursor"></span></div>
   </div>
 </div>
 
@@ -500,11 +531,11 @@ h2::after{
         <div class="proj-body">
           <h3>Eva Pharma — Sales &amp; Distribution Analytics</h3>
           <div class="proj-tags"><span>Python</span><span>Pandas</span><span>NumPy</span><span>Matplotlib</span><span>Seaborn</span><span>Plotly</span></div>
-          <p class="proj-desc">Cleaned and analyzed ~600K pharmaceutical sales transactions across 179+ branches — fixing duplicate records, inconsistent Arabic/English branch and product names, and messy currency fields — then surfaced monthly revenue trends, top products, top branches, and a regional deep-dive on Banha.</p>
+          <p class="proj-desc">Cleaned and analyzed a 599,066-row pharmaceutical sales dataset across 179 branches — removing 10,001 duplicate records, consolidating 531 inconsistent Arabic/English branch-name variants into 179 accurate entries, and resolving missing/malformed values across 6 key fields to reach 587,000+ analysis-ready transactions. Surfaced monthly revenue trends, top products and branches, and a regional deep-dive on Banha that uncovered a September revenue spike and its top 5 local products and customers.</p>
           <div class="proj-metrics">
-            <div><div class="num">600K+</div><div class="label">Transactions</div></div>
-            <div><div class="num">179+</div><div class="label">Branches</div></div>
-            <div><div class="num">6</div><div class="label">Libraries used</div></div>
+            <div><div class="num">599,066</div><div class="label">Rows processed</div></div>
+            <div><div class="num">10,001</div><div class="label">Duplicates removed</div></div>
+            <div><div class="num">531→179</div><div class="label">Branch names merged</div></div>
           </div>
           <div class="proj-actions">
             <a class="btn btn-solid" href="pharma-case-study.html">Case Study →</a>
@@ -527,10 +558,10 @@ h2::after{
         <div class="timeline-line" id="timelineFill"></div>
         <div class="tl-item ongoing reveal">
           <div class="tl-dot"></div>
-          <span class="tl-period">Jul 2026 — Dec 2026 · Ongoing</span>
+          <span class="tl-period">Jul 2026 — Dec 2026 · Ongoing · 21 Weeks</span>
           <h3>Data Scientist Track — Digital Egypt Pioneers Initiative (DEPI)</h3>
           <div class="tl-org">Ministry of Communications &amp; Information Technology (MCIT), Egypt</div>
-          <p class="tl-desc">AI &amp; Data Science track with a curriculum designed by IBM, covering the full data science pipeline from foundations to deployment.</p>
+          <p class="tl-desc">AI &amp; Data Science track with a curriculum designed by IBM, covering the full pipeline: Python for Data Science, SQL, Data Analysis &amp; Visualization, Machine Learning with Python, MLOps/MLflow &amp; Hugging Face, and a Capstone Project.</p>
         </div>
         <div class="tl-item reveal">
           <div class="tl-dot"></div>
@@ -552,6 +583,13 @@ h2::after{
           <h3>Google Developer Groups (GDG) — Flutter Track</h3>
           <div class="tl-org">Certificate of Completion</div>
           <p class="tl-desc">Community training track on building cross-platform apps with Flutter.</p>
+        </div>
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <span class="tl-period">Ongoing</span>
+          <h3>Public Speaking &amp; Technical Presentations</h3>
+          <div class="tl-org">University &amp; external settings</div>
+          <p class="tl-desc">Delivered multiple technical and non-technical presentations, building audience engagement and communication skills.</p>
         </div>
       </div>
     </div>
@@ -639,7 +677,7 @@ h2::after{
 <footer>© 2026 Sama Dawood · Benha, Egypt</footer>
 
 <script>
-// Safety net: page is guaranteed visible after 4s no matter what.
+// Safety net: page is guaranteed visible shortly no matter what.
 var __introSafety = setTimeout(function(){
   try{
     document.body.classList.remove('loading');
@@ -647,7 +685,7 @@ var __introSafety = setTimeout(function(){
     if(l) l.remove();
     document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
   }catch(e){}
-}, 4000);
+}, 2000);
 
 try{
 (function(){
@@ -658,7 +696,7 @@ try{
     clearTimeout(__introSafety);
     document.body.classList.remove('loading');
     loader.classList.add('loaded');
-    setTimeout(()=> loader.remove(), 700);
+    setTimeout(()=> loader.remove(), 460);
   }
 
   if(reduce || !loader){
@@ -669,36 +707,37 @@ try{
   }
 
   const introLine = document.getElementById('introLine');
-  const introBarFill = document.getElementById('introBarFill');
   const introPct = document.getElementById('introPct');
-  const messages = ['import sama_dawood as sd', 'sd.portfolio.render()'];
+  const ringFill = document.getElementById('introRingFill');
+  const CIRC = 251;
+  const messages = ['sd.load_data()', 'sd.clean()', 'render()'];
   let msgIndex = 0, charIndex = 0;
 
   function typeMsg(){
-    if(msgIndex >= messages.length) return;
+    if(msgIndex >= messages.length){ msgIndex = 0; }
     const msg = messages[msgIndex];
     if(charIndex <= msg.length){
-      introLine.textContent = msg.slice(0, charIndex);
+      introLine.innerHTML = msg.slice(0, charIndex) + '<span class="cursor"></span>';
       charIndex++;
-      setTimeout(typeMsg, 26);
+      setTimeout(typeMsg, 13);
     } else {
       msgIndex++; charIndex = 0;
-      setTimeout(typeMsg, 260);
+      setTimeout(typeMsg, 90);
     }
   }
   typeMsg();
 
   let pct = 0;
   const barInterval = setInterval(()=>{
-    pct += Math.random()*16;
+    pct += 9 + Math.random()*14;
     if(pct >= 100){
       pct = 100;
       clearInterval(barInterval);
-      setTimeout(finishIntro, 380);
+      setTimeout(finishIntro, 160);
     }
-    introBarFill.style.width = pct + '%';
+    ringFill.style.strokeDashoffset = CIRC - (CIRC*pct/100);
     introPct.textContent = Math.floor(pct) + '%';
-  }, 170);
+  }, 75);
 })();
 }catch(e){}
 </script>
