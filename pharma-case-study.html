@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -126,20 +126,56 @@
   .chart-card .chart-title{ font-family:'JetBrains Mono',monospace; font-size:.76rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:14px; }
   .chart-wrap{ position:relative; height:280px; }
 
+  /* gallery — contact-sheet grid */
+  .gallery-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:14px; margin-top:24px; }
+  .gallery-item{
+    position:relative; padding:0; margin:0; border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--surface); overflow:hidden; cursor:zoom-in; aspect-ratio:16/10;
+    transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+  }
+  .gallery-item img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.9) brightness(.92); transition:filter .4s ease, transform .5s ease; }
+  .gallery-item:hover{ border-color:var(--teal); transform:translateY(-3px); box-shadow:0 16px 30px -16px rgba(0,0,0,.55); }
+  .gallery-item:hover img{ filter:saturate(1.05) brightness(1); transform:scale(1.04); }
+  .gallery-fig{
+    position:absolute; left:10px; bottom:10px; font-size:.68rem; color:var(--text);
+    background:rgba(13,24,38,.72); border:1px solid rgba(200,220,235,.18); padding:3px 8px; border-radius:2px;
+    letter-spacing:.04em; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  }
+
+  /* lightbox */
+  .lightbox{
+    position:fixed; inset:0; z-index:200; background:rgba(9,16,26,.92); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease;
+  }
+  .lightbox.open{ opacity:1; visibility:visible; }
+  .lightbox-img{ max-width:min(88vw,1000px); max-height:78vh; border-radius:4px; border:1px solid var(--line); box-shadow:0 30px 70px -20px rgba(0,0,0,.7); }
+  .lightbox-caption{ position:absolute; bottom:26px; left:50%; transform:translateX(-50%); font-size:.75rem; color:var(--muted); letter-spacing:.04em; }
+  .lightbox-close{
+    position:absolute; top:22px; right:26px; width:38px; height:38px; border-radius:50%; border:1px solid var(--line);
+    background:var(--surface); color:var(--text); font-size:1.3rem; line-height:1; cursor:pointer; transition:border-color .2s,color .2s;
+  }
+  .lightbox-close:hover{ border-color:var(--teal); color:var(--teal); }
+  .lightbox-nav{
+    position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%;
+    border:1px solid var(--line); background:var(--surface); color:var(--text); font-size:1.6rem; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:border-color .2s,color .2s;
+  }
+  .lightbox-nav:hover{ border-color:var(--amber); color:var(--amber); }
+  .lightbox-prev{ left:18px; }
+  .lightbox-next{ right:18px; }
+  @media(max-width:640px){ .lightbox-nav{ width:38px; height:38px; font-size:1.3rem; } .lightbox-close{ width:34px; height:34px; top:14px; right:14px; } }
+
   footer{ border-top:1px solid var(--line); padding:32px 0; text-align:center; font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--muted); }
   footer a{ border-bottom:1px dotted var(--muted); color:var(--muted); }
 
-  /* intro loader */
+  /* intro loader — fast fade only */
   body.loading{ overflow:hidden; height:100vh; }
-  #intro-loader{ position:fixed; inset:0; z-index:999; background:var(--ink); display:flex; align-items:center; justify-content:center; transition:opacity .6s ease,visibility .6s ease; }
+  #intro-loader{ position:fixed; inset:0; z-index:999; background:var(--ink); display:flex; align-items:center; justify-content:center; transition:opacity .3s ease,visibility .3s ease; }
   #intro-loader.loaded{ opacity:0; visibility:hidden; pointer-events:none; }
-  .intro-inner{ text-align:center; width:300px; max-width:80vw; }
-  .intro-logo{ font-family:'Fraunces',serif; font-weight:600; font-size:1.8rem; margin-bottom:20px; }
+  .intro-inner{ text-align:center; }
+  .intro-logo{ font-family:'Fraunces',serif; font-weight:600; font-size:1.8rem; opacity:0; animation:introLogoFade .5s ease forwards; }
   .intro-logo span{ color:var(--amber); }
-  .intro-line{ font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--teal); min-height:18px; margin-bottom:20px; white-space:nowrap; overflow:hidden; border-right:2px solid var(--teal); display:inline-block; padding-right:2px; }
-  .intro-bar{ height:3px; background:var(--surface-2); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
-  .intro-bar-fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--amber)); transition:width .2s linear; }
-  .intro-pct{ font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--muted); margin-top:10px; }
+  @keyframes introLogoFade{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
   @media(prefers-reduced-motion:reduce){ #intro-loader{ display:none; } }
 
   @media(max-width:600px){ .wrap{ padding:0 20px; } }
@@ -194,9 +230,6 @@
 <div id="intro-loader">
   <div class="intro-inner">
     <div class="intro-logo">Sama<span>.</span></div>
-    <div class="intro-line" id="introLine"></div>
-    <div class="intro-bar"><div class="intro-bar-fill" id="introBarFill"></div></div>
-    <div class="intro-pct" id="introPct">0%</div>
   </div>
 </div>
 
@@ -218,6 +251,7 @@
   <a href="#overview" class="toc-link"><span class="dot"></span><span class="label">Overview</span></a>
   <a href="#cleaning" class="toc-link"><span class="dot"></span><span class="label">Data Cleaning</span></a>
   <a href="#analysis" class="toc-link"><span class="dot"></span><span class="label">Analysis</span></a>
+  <a href="#gallery" class="toc-link"><span class="dot"></span><span class="label">Gallery</span></a>
   <a href="#stack" class="toc-link"><span class="dot"></span><span class="label">Tools</span></a>
 </nav>
 
@@ -332,6 +366,35 @@
     </div>
   </section>
 
+  <section class="block" id="gallery">
+    <div class="wrap">
+      <span class="tag">Behind the analysis</span>
+      <h2>Notebook &amp; charts</h2>
+      <p class="muted">A few frames from the actual notebook — the cleaning code, and the charts it produced.</p>
+
+      <div class="gallery-grid">
+        <button class="gallery-item" data-index="0"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035418.png" alt="Eva Pharma notebook — fig. 01" loading="lazy"><span class="gallery-fig mono">Fig. 01</span></button>
+        <button class="gallery-item" data-index="1"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035426.png" alt="Eva Pharma notebook — fig. 02" loading="lazy"><span class="gallery-fig mono">Fig. 02</span></button>
+        <button class="gallery-item" data-index="2"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035445.png" alt="Eva Pharma notebook — fig. 03" loading="lazy"><span class="gallery-fig mono">Fig. 03</span></button>
+        <button class="gallery-item" data-index="3"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035522.png" alt="Eva Pharma notebook — fig. 04" loading="lazy"><span class="gallery-fig mono">Fig. 04</span></button>
+        <button class="gallery-item" data-index="4"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035533.png" alt="Eva Pharma notebook — fig. 05" loading="lazy"><span class="gallery-fig mono">Fig. 05</span></button>
+        <button class="gallery-item" data-index="5"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035615.png" alt="Eva Pharma notebook — fig. 06" loading="lazy"><span class="gallery-fig mono">Fig. 06</span></button>
+        <button class="gallery-item" data-index="6"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035623.png" alt="Eva Pharma notebook — fig. 07" loading="lazy"><span class="gallery-fig mono">Fig. 07</span></button>
+        <button class="gallery-item" data-index="7"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035634.png" alt="Eva Pharma notebook — fig. 08" loading="lazy"><span class="gallery-fig mono">Fig. 08</span></button>
+        <button class="gallery-item" data-index="8"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035639.png" alt="Eva Pharma notebook — fig. 09" loading="lazy"><span class="gallery-fig mono">Fig. 09</span></button>
+        <button class="gallery-item" data-index="9"><img src="https://raw.githubusercontent.com/sama-daw/sama-daw.github.io/main/Pharma_pics/Screenshot%202026-09-26%20035649.png" alt="Eva Pharma notebook — fig. 10" loading="lazy"><span class="gallery-fig mono">Fig. 10</span></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous">&#8249;</button>
+    <img class="lightbox-img" id="lightboxImg" alt="">
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next">&#8250;</button>
+    <div class="lightbox-caption mono" id="lightboxCaption"></div>
+  </div>
+
   <section class="block" id="stack">
     <div class="wrap">
       <span class="tag">Stack</span>
@@ -348,65 +411,29 @@
 </footer>
 
 <script>
-// Safety net: page is guaranteed visible after 4s no matter what.
+// Safety net: page is guaranteed visible shortly no matter what.
 var __introSafety = setTimeout(function(){
   try{
     document.body.classList.remove('loading');
     var l = document.getElementById('intro-loader');
     if(l) l.remove();
   }catch(e){}
-}, 4000);
+}, 1200);
 
 try{
 (function(){
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const loader = document.getElementById('intro-loader');
+  if(!loader){ clearTimeout(__introSafety); document.body.classList.remove('loading'); return; }
 
   function finishIntro(){
     clearTimeout(__introSafety);
     document.body.classList.remove('loading');
     loader.classList.add('loaded');
-    setTimeout(()=> loader.remove(), 700);
+    setTimeout(()=> loader.remove(), 350);
   }
 
-  if(reduce || !loader){
-    clearTimeout(__introSafety);
-    document.body.classList.remove('loading');
-    if(loader) loader.remove();
-    return;
-  }
-
-  const introLine = document.getElementById('introLine');
-  const introBarFill = document.getElementById('introBarFill');
-  const introPct = document.getElementById('introPct');
-  const messages = ['load_case_study("eva_pharma")', 'df.clean().analyze()'];
-  let msgIndex = 0, charIndex = 0;
-
-  function typeMsg(){
-    if(msgIndex >= messages.length) return;
-    const msg = messages[msgIndex];
-    if(charIndex <= msg.length){
-      introLine.textContent = msg.slice(0, charIndex);
-      charIndex++;
-      setTimeout(typeMsg, 26);
-    } else {
-      msgIndex++; charIndex = 0;
-      setTimeout(typeMsg, 260);
-    }
-  }
-  typeMsg();
-
-  let pct = 0;
-  const barInterval = setInterval(()=>{
-    pct += Math.random()*16;
-    if(pct >= 100){
-      pct = 100;
-      clearInterval(barInterval);
-      setTimeout(finishIntro, 380);
-    }
-    introBarFill.style.width = pct + '%';
-    introPct.textContent = Math.floor(pct) + '%';
-  }, 170);
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(finishIntro, reduce ? 0 : 250);
 })();
 }catch(e){}
 </script>
@@ -575,6 +602,46 @@ try{
         }
       });
     }
+  });
+</script>
+
+<script>
+  // gallery lightbox
+  const items = Array.from(document.querySelectorAll('.gallery-item'));
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCaption = document.getElementById('lightboxCaption');
+  let current = 0;
+
+  function openLightbox(i){
+    current = i;
+    const img = items[i].querySelector('img');
+    lightboxImg.src = img.src;
+    lightboxImg.alt = img.alt;
+    lightboxCaption.textContent = 'Fig. ' + String(i + 1).padStart(2, '0') + ' / ' + String(items.length).padStart(2, '0');
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  function step(delta){
+    openLightbox((current + delta + items.length) % items.length);
+  }
+
+  items.forEach((el, i) => el.addEventListener('click', () => openLightbox(i)));
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('lightboxPrev').addEventListener('click', () => step(-1));
+  document.getElementById('lightboxNext').addEventListener('click', () => step(1));
+  lightbox.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if(!lightbox.classList.contains('open')) return;
+    if(e.key === 'Escape') closeLightbox();
+    if(e.key === 'ArrowLeft') step(-1);
+    if(e.key === 'ArrowRight') step(1);
   });
 </script>
 
