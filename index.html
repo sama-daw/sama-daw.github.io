@@ -50,6 +50,7 @@
   header.site{
     position:sticky; top:0; z-index:50;
     background:rgba(13,24,38,.82);
+    -webkit-backdrop-filter:blur(10px);
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
@@ -103,7 +104,7 @@
     .nav-toggle{ display:block; }
     .nav-links{
       display:flex; flex-direction:column; gap:0; position:fixed; top:60px; left:0; right:0;
-      background:rgba(13,24,38,.98); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+      background:rgba(13,24,38,.98); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
       max-height:0; overflow:hidden; transition:max-height .25s ease;
     }
     .nav-links.open{ max-height:360px; }
@@ -362,6 +363,15 @@
     }
   }
 </style>
+<noscript>
+  <style>
+    body.loading{ overflow:visible !important; height:auto !important; }
+    #intro-loader{ display:none !important; }
+    .hero .eyebrow, .hero h1.name, .hero .lede, .hero .hero-actions,
+    .hero .contact-line, .hero .stat-row, .hero .portrait-block,
+    .reveal{ opacity:1 !important; transform:none !important; }
+  </style>
+</noscript>
 </head>
 <body class="loading">
 
@@ -618,12 +628,27 @@
 <footer>© 2026 Sama Dawood · Benha, Egypt</footer>
 
 <script>
+  // Safety net: no matter what happens in the animation code below,
+  // the page is guaranteed to be visible after 4 seconds at the latest.
+  var __introSafety = setTimeout(function(){
+    try{
+      document.body.classList.remove('loading');
+      var h = document.querySelector('.hero');
+      if(h) h.classList.add('hero-in');
+      var l = document.getElementById('intro-loader');
+      if(l) l.remove();
+      document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+    }catch(e){}
+  }, 4000);
+
+  try{
   (function(){
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const loader = document.getElementById('intro-loader');
     const hero = document.querySelector('.hero');
 
     function finishIntro(){
+      clearTimeout(__introSafety);
       document.body.classList.remove('loading');
       hero.classList.add('hero-in');
       loader.classList.add('loaded');
@@ -631,6 +656,7 @@
     }
 
     if(reduce || !loader){
+      clearTimeout(__introSafety);
       document.body.classList.remove('loading');
       hero.classList.add('hero-in');
       if(loader) loader.remove();
@@ -670,8 +696,10 @@
       introPct.textContent = Math.floor(pct) + '%';
     }, 170);
   })();
+  }catch(e){}
 
   // Scroll reveal
+  try{
   const revealEls = document.querySelectorAll('.reveal');
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{
@@ -682,8 +710,10 @@
     });
   }, { threshold:.15 });
   revealEls.forEach(el=>io.observe(el));
+  }catch(e){}
 
   // Mobile nav toggle
+  try{
   const navToggle = document.getElementById('navToggle');
   const navLinksEl = document.querySelector('.nav-links');
   navToggle.addEventListener('click', ()=>{
@@ -698,8 +728,10 @@
       navToggle.setAttribute('aria-expanded','false');
     });
   });
+  }catch(e){}
 
   // Skill meter fill on view
+  try{
   const meters = document.querySelectorAll('.meter-fill');
   const mio = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{
@@ -710,8 +742,10 @@
     });
   }, { threshold:.4 });
   meters.forEach(m=>mio.observe(m));
+  }catch(e){}
 
   // Hero signature: animated scatter + regression line ("turning data into insight")
+  try{
   (function(){
     const canvas = document.getElementById('signal-canvas');
     const ctx = canvas.getContext('2d');
@@ -779,6 +813,7 @@
     }
     requestAnimationFrame(draw);
   })();
+  }catch(e){}
 </script>
 
 </body>
