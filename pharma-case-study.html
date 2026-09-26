@@ -17,7 +17,13 @@
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
-  body{ margin:0; background:var(--ink); color:var(--text); font-family:'Inter',sans-serif; font-size:16px; line-height:1.7; -webkit-font-smoothing:antialiased; }
+  body{ margin:0; background:var(--ink); color:var(--text); font-family:'Inter',sans-serif; font-size:16px; line-height:1.7; -webkit-font-smoothing:antialiased; position:relative; }
+  #bg-canvas{ position:fixed; inset:0; z-index:-1; width:100vw; height:100vh; display:block; }
+  body::after{
+    content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.4;
+    background-image:radial-gradient(rgba(200,220,235,.14) 1px, transparent 1px);
+    background-size:28px 28px;
+  }
   a{ color:var(--teal); text-decoration:none; border-bottom:1px dotted var(--teal); }
   a:hover{ color:#6fe0d5; }
   .wrap{ max-width:880px; margin:0 auto; padding:0 24px; }
@@ -122,9 +128,77 @@
 
   footer{ border-top:1px solid var(--line); padding:32px 0; text-align:center; font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--muted); }
   footer a{ border-bottom:1px dotted var(--muted); color:var(--muted); }
+
+  /* intro loader */
+  body.loading{ overflow:hidden; height:100vh; }
+  #intro-loader{ position:fixed; inset:0; z-index:999; background:var(--ink); display:flex; align-items:center; justify-content:center; transition:opacity .6s ease,visibility .6s ease; }
+  #intro-loader.loaded{ opacity:0; visibility:hidden; pointer-events:none; }
+  .intro-inner{ text-align:center; width:300px; max-width:80vw; }
+  .intro-logo{ font-family:'Fraunces',serif; font-weight:600; font-size:1.8rem; margin-bottom:20px; }
+  .intro-logo span{ color:var(--amber); }
+  .intro-line{ font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--teal); min-height:18px; margin-bottom:20px; white-space:nowrap; overflow:hidden; border-right:2px solid var(--teal); display:inline-block; padding-right:2px; }
+  .intro-bar{ height:3px; background:var(--surface-2); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  .intro-bar-fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--amber)); transition:width .2s linear; }
+  .intro-pct{ font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--muted); margin-top:10px; }
+  @media(prefers-reduced-motion:reduce){ #intro-loader{ display:none; } }
+
+  @media(max-width:600px){ .wrap{ padding:0 20px; } }
+
+  /* ============================================================
+     REDESIGN LAYER — same palette, hand-made/editorial feel
+     (matches the main portfolio page)
+     ============================================================ */
+  section.block{ border-top-style:dashed; }
+
+  .logo{ position:relative; padding-bottom:4px; }
+  .logo::after{
+    content:''; position:absolute; left:0; bottom:-2px; width:100%; height:6px;
+    background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 10'><path d='M2 6 Q 14 1 28 6 T 58 6' stroke='%23f2b84b' stroke-width='2.2' fill='none' stroke-linecap='round'/></svg>") no-repeat;
+    background-size:100% 100%; opacity:.85;
+  }
+
+  h2{ position:relative; display:inline-block; }
+  h2::after{
+    content:''; display:block; width:56px; height:9px; margin-top:8px;
+    background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 10'><path d='M1 6 Q 10 1 20 6 T 40 6 T 59 5' stroke='%234fd1c5' stroke-width='2.2' fill='none' stroke-linecap='round'/></svg>") no-repeat;
+    background-size:contain; opacity:.8;
+  }
+
+  .btn{ border-radius:3px 13px 3px 13px; transition:background .2s,color .2s,transform .2s,box-shadow .2s; }
+  .btn:hover{ transform:translateY(-2px); box-shadow:0 10px 20px -10px rgba(79,209,197,.45); }
+  .btn-solid:hover{ box-shadow:0 10px 22px -8px rgba(79,209,197,.55); }
+
+  .insight-card{ position:relative; box-shadow:0 16px 30px -18px rgba(0,0,0,.6); }
+  .insight-card::before{
+    content:''; position:absolute; top:-9px; left:50%; width:34px; height:13px;
+    background:rgba(233,241,246,.1); border:1px solid rgba(233,241,246,.18);
+    transform:translateX(-50%) rotate(-4deg);
+  }
+  .insight-card:nth-child(3n+1){ transform:rotate(-1deg); }
+  .insight-card:nth-child(3n+2){ transform:rotate(.8deg); }
+  .insight-card:nth-child(3n+3){ transform:rotate(-.6deg); }
+  .insight-card:hover{ transform:rotate(0deg) translateY(-4px); }
+
+  @media(prefers-reduced-motion:reduce){ .insight-card,.btn{ transition:none; } }
 </style>
+<noscript>
+  <style>
+    body.loading{ overflow:visible !important; height:auto !important; }
+    #intro-loader{ display:none !important; }
+  </style>
+</noscript>
 </head>
-<body>
+<body class="loading">
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+<div id="intro-loader">
+  <div class="intro-inner">
+    <div class="intro-logo">Sama<span>.</span></div>
+    <div class="intro-line" id="introLine"></div>
+    <div class="intro-bar"><div class="intro-bar-fill" id="introBarFill"></div></div>
+    <div class="intro-pct" id="introPct">0%</div>
+  </div>
+</div>
 
 <div class="progress" id="progressBar"></div>
 
@@ -272,6 +346,133 @@
     © 2026 Sama Dawood · <a href="https://github.com/sama-daw/Pharma_Analysis_Project" target="_blank" rel="noopener">Project on GitHub</a>
   </div>
 </footer>
+
+<script>
+// Safety net: page is guaranteed visible after 4s no matter what.
+var __introSafety = setTimeout(function(){
+  try{
+    document.body.classList.remove('loading');
+    var l = document.getElementById('intro-loader');
+    if(l) l.remove();
+  }catch(e){}
+}, 4000);
+
+try{
+(function(){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const loader = document.getElementById('intro-loader');
+
+  function finishIntro(){
+    clearTimeout(__introSafety);
+    document.body.classList.remove('loading');
+    loader.classList.add('loaded');
+    setTimeout(()=> loader.remove(), 700);
+  }
+
+  if(reduce || !loader){
+    clearTimeout(__introSafety);
+    document.body.classList.remove('loading');
+    if(loader) loader.remove();
+    return;
+  }
+
+  const introLine = document.getElementById('introLine');
+  const introBarFill = document.getElementById('introBarFill');
+  const introPct = document.getElementById('introPct');
+  const messages = ['load_case_study("eva_pharma")', 'df.clean().analyze()'];
+  let msgIndex = 0, charIndex = 0;
+
+  function typeMsg(){
+    if(msgIndex >= messages.length) return;
+    const msg = messages[msgIndex];
+    if(charIndex <= msg.length){
+      introLine.textContent = msg.slice(0, charIndex);
+      charIndex++;
+      setTimeout(typeMsg, 26);
+    } else {
+      msgIndex++; charIndex = 0;
+      setTimeout(typeMsg, 260);
+    }
+  }
+  typeMsg();
+
+  let pct = 0;
+  const barInterval = setInterval(()=>{
+    pct += Math.random()*16;
+    if(pct >= 100){
+      pct = 100;
+      clearInterval(barInterval);
+      setTimeout(finishIntro, 380);
+    }
+    introBarFill.style.width = pct + '%';
+    introPct.textContent = Math.floor(pct) + '%';
+  }, 170);
+})();
+}catch(e){}
+</script>
+
+<script>
+// Live background: drifting data-node network
+try{
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let dpr = Math.min(window.devicePixelRatio||1, 2), w, h;
+  function resize(){
+    w = window.innerWidth; h = window.innerHeight;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COUNT = Math.min(130, Math.floor((window.innerWidth*window.innerHeight)/11000));
+  const nodes = [];
+  for(let i=0;i<COUNT;i++){
+    nodes.push({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-0.5)*0.55, vy: (Math.random()-0.5)*0.55,
+      r: 1+Math.random()*1.6, amber: Math.random()<0.3
+    });
+  }
+  const LINK_DIST = 160;
+
+  function step(){
+    ctx.clearRect(0,0,w,h);
+    nodes.forEach(n=>{
+      n.x += n.vx; n.y += n.vy;
+      if(n.x<0||n.x>w) n.vx*=-1;
+      if(n.y<0||n.y>h) n.vy*=-1;
+    });
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const a=nodes[i], b=nodes[j];
+        const dx=a.x-b.x, dy=a.y-b.y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<LINK_DIST){
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle = 'rgba(79,209,197,'+(0.3*(1-dist/LINK_DIST))+')';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+    nodes.forEach(n=>{
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle = n.amber ? 'rgba(242,184,75,.75)' : 'rgba(79,209,197,.65)';
+      ctx.fill();
+    });
+    if(!reduce) requestAnimationFrame(step);
+  }
+  if(reduce){
+    step();
+  } else {
+    requestAnimationFrame(step);
+  }
+}catch(e){}
+</script>
 
 <script>
   // scroll progress bar
